@@ -1,0 +1,87 @@
+# configs/config.yaml
+# Central configuration for the RCM Predictive Analytics System
+
+project:
+  name: "RCM Claim Denial Prediction"
+  version: "0.1.0"
+  random_seed: 42
+
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_external: "data/external"
+  outputs: "outputs"
+  figures: "outputs/figures"
+  models: "outputs/models"
+  reports: "outputs/reports"
+
+data:
+  cms_puf_url: "https://www.cms.gov/Research-Statistics-Data-and-Systems/Downloadable-Public-Use-Files/SynPUFs"
+  # Local fallback: place downloaded files in data/raw/
+  sample_size: null  # null = use full dataset; set integer for dev/testing (e.g. 100000)
+  test_size: 0.15
+  val_size: 0.15
+  # Temporal split column (use claim start date for time-aware splits)
+  temporal_split_col: "CLM_FROM_DT"
+
+labeling:
+  # Three strategies to test (see Section 5 - Label Quality Risk)
+  strategy: "high_bene_resp"   # options: payment_ratio | zero_payment | combined | high_bene_resp
+  denial_threshold: 0.10      # claims paid < 10% of submitted = denied
+
+features:
+  # L1: Claim attributes
+  claim_cols:
+    - "CLM_PMT_AMT"
+    - "CLM_PASS_THRU_PER_DIEM_AMT"
+    - "NCH_PRMRY_PYR_CLM_PD_AMT"
+    - "AT_PHYSN_SPCLTY_CD"
+    - "OP_PHYSN_SPCLTY_CD"
+  # L2: Historical aggregates (rolling windows in days)
+  rolling_windows: [30, 60, 90]
+  # L3: Temporal
+  temporal_cols:
+    - "CLM_FROM_DT"
+    - "CLM_THRU_DT"
+
+modeling:
+  # Baseline
+  logistic_regression:
+    max_iter: 1000
+    class_weight: "balanced"
+    C: 1.0
+
+  # Advanced
+  xgboost:
+    n_estimators: 500
+    learning_rate: 0.05
+    max_depth: 6
+    subsample: 0.8
+    colsample_bytree: 0.8
+    scale_pos_weight: "auto"   # will be computed from class ratio
+
+  lightgbm:
+    n_estimators: 500
+    learning_rate: 0.05
+    num_leaves: 63
+    is_unbalance: true
+
+  # Cross-validation
+  cv_folds: 5
+  scoring: "roc_auc"
+
+evaluation:
+  risk_thresholds:
+    low: 0.20
+    high: 0.60
+  cost_model:
+    avg_claim_amount: 500
+    intervention_success_rate: 0.60
+    review_cost: 25
+  # False Negative cost = avg_claim_amount * intervention_success_rate = $300
+  # False Positive cost = review_cost = $25
+
+explainability:
+  shap_sample_size: 500   # background sample for SHAP TreeExplainer
+  top_n_features: 15      # for global summary plots
+  local_examples: 10      # high-risk claims to explain individually
