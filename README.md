@@ -75,7 +75,7 @@ rcm_project/
 
 ```powershell
 # Clone the repository
-git clone https://github.com/<your-username>/rcm_project.git
+git clone https://github.com/AasirR/rcm_project.git
 cd rcm_project
 
 # Create virtual environment
