@@ -14,7 +14,6 @@
 | Improved method implemented | ✅ | `notebooks/04_Advanced_Models.ipynb` |
 | System architecture diagram | ✅ | See below |
 | Code link | ✅ | This repository |
-| Demo video | ✅ | [Link to video] |
 
 ---
 
@@ -190,18 +189,4 @@ Random seed: `42` (set in `configs/config.yaml`, passed to all models).
 Data: Public CMS DE-SynPUF, downloaded automatically.  
 Environment: `requirements.txt` provided.
 
----
 
-## 8. Demo Video Structure (6 min max)
-
-*See submitted video link above.*
-
-| Timestamp | Content |
-|-----------|---------|
-| 0:00–0:30 | Problem statement — what denial risk prediction is and why it matters |
-| 0:30–1:30 | Pipeline walkthrough — show the 5 notebooks and explain the flow |
-| 1:30–2:30 | EDA highlights — label distribution, key findings from NB01 |
-| 2:30–3:30 | Model results — show NB03 and NB04 outputs, explain the LR≈XGBoost finding |
-| 3:30–4:30 | SHAP explainability — show the beeswarm plot and waterfall for one claim |
-| 4:30–5:30 | Streamlit dashboard — live demo of the 6 tabs, move the threshold slider |
-| 5:30–6:00 | Summary — net savings, key limitations, next steps |
